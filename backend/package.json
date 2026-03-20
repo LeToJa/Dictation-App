@@ -1,0 +1,45 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dynamodb": "serverless dynamodb install",
+    "dev": "serverless offline start --httpPort 4000",
+    "test": "jest --watch",
+    "lint": "eslint . --ext .ts --fix"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/aws-lambda": "^8.10.161",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.5.0",
+    "@typescript-eslint/eslint-plugin": "^8.57.1",
+    "@typescript-eslint/parser": "^8.57.1",
+    "aws-sdk": "^2.1693.0",
+    "eslint": "^10.0.3",
+    "globals": "^17.4.0",
+    "jest": "^30.3.0",
+    "serverless": "^4.33.0",
+    "serverless-dynamodb": "^0.2.56",
+    "serverless-offline": "^14.5.0",
+    "serverless-s3-local": "^0.8.5",
+    "ts-jest": "^29.4.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.57.1"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.1013.0",
+    "@aws-sdk/client-s3": "^3.1013.0",
+    "@aws-sdk/lib-dynamodb": "^3.1013.0",
+    "@aws-sdk/s3-request-presigner": "^3.1013.0",
+    "uuid": "^13.0.0"
+  },
+  "type": "module",
+  "overrides": {
+    "serverless-dynamodb": {
+      "serverless": "$serverless"
+    }
+  }
+}
