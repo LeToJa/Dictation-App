@@ -21,10 +21,10 @@
 
   runtimeConfig: {
     public: {
-      apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:4000',
-      awsRegion: process.env.AWS_REGION || 'eu-south-2',
-      cognitoUserPoolId: process.env.COGNITO_USER_POOL_ID || '',
-      cognitoClientId: process.env.COGNITO_CLIENT_ID || '',
+      apiBaseUrl: 'http://localhost:4000',
+      awsRegion: 'eu-south-2',
+      cognitoUserPoolId: '',
+      cognitoClientId: '',
     },
   },
 

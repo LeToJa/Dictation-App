@@ -1,0 +1,59 @@
+service: dictation-backend
+
+provider:
+  name: aws
+  environment:
+    DYNAMODB_ENDPOINT: http://localhost:8000
+
+plugins:
+  - serverless-offline
+  - serverless-dynamodb
+
+custom:
+  serverless-offline:
+    httpPort: 4000
+    noPrependStageInUrl: true
+    host: 0.0.0.0
+  dynamodb:
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+
+functions:
+  register:
+    handler: src/functions/register.handler
+    events:
+      - http:
+          path: register
+          method: post
+          cors: true
+  login:
+    handler: src/functions/login.handler
+    events:
+      - http:
+          path: login
+          method: post
+          cors: true
+
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: dictation-users
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: username
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: UsernameIndex
+            KeySchema:
+              - AttributeName: username
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL

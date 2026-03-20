@@ -6,6 +6,12 @@ frontend/.nitro
 frontend/.cache
 frontend/dist
 
+# Dynamodb local files
+backend/.dynamodb
+backend/.serverless
+backend/.build
+backend/undefined
+
 # Node dependencies
 backend/node_modules
 frontend/node_modules

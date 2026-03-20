@@ -31,6 +31,5 @@
         "pinia": "^3.0.4",
         "typescript-eslint": "^8.57.1",
         "vue-eslint-parser": "^10.4.0"
-    },
-    "type": "module"
+    }
 }

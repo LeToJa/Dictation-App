@@ -36,7 +36,6 @@
     "@aws-sdk/s3-request-presigner": "^3.1013.0",
     "uuid": "^13.0.0"
   },
-  "type": "module",
   "overrides": {
     "serverless-dynamodb": {
       "serverless": "$serverless"
