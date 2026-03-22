@@ -3,9 +3,8 @@
   
     if (process.client) {
         const user = localStorage.getItem('auth_user')
-        const token = localStorage.getItem('auth_token')
 
-        isAuthenticated = !!(user && token)
+        isAuthenticated = !!(user)
     }
 
     if (!isAuthenticated) {

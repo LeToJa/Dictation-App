@@ -1,7 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { docClient, USERS_TABLE } from '../dynamodb';
 import { ScanCommand } from '@aws-sdk/lib-dynamodb';
-import { v4 as uuidv4 } from 'uuid';
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
@@ -11,7 +10,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     if (!username || !password) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'Username and password are required' }),
+        body: JSON.stringify({ error: 'username and password are required' }),
       };
     }
 
@@ -25,24 +24,23 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       })
     );
 
-    const user = (result.Items && result.Items[0]) as { id: string; username: string; password?: string } | undefined;
+    const userObject = (result.Items && result.Items[0]) as { id: string; username: string; password?: string } | undefined;
 
-    if (!user || user.password !== password) {
+    if (!userObject || userObject.password !== password) {
       return {
         statusCode: 401,
         body: JSON.stringify({ error: 'Invalid credentials' }),
       };
     }
 
-    const token = uuidv4();
-    const responseUser = {
-      id: user.id,
-      username: user.username,
+    const responseusername = {
+      id: userObject.id,
+      username: userObject.username,
     };
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ user: responseUser, token }),
+      body: JSON.stringify({ ...responseusername }),
     };
   } catch (error) {
     console.error('Error:', error);

@@ -11,6 +11,8 @@ backend/.dynamodb
 backend/.serverless
 backend/.build
 backend/undefined
+backend/db/*
+backend/uploads/*
 
 # Node dependencies
 backend/node_modules

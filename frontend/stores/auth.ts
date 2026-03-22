@@ -1,28 +1,27 @@
-﻿import { defineStore } from 'pinia'
-
-interface User {
+﻿interface User {
     id: string
-    username: string
+    user: string
 }
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-        user: null as User | null,
-        token: null as string | null,
+        username: null as string | null,
+        id: null as string | null,
         loading: false,
   }),  
   getters: {
-        isAuthenticated: (state) => !!state.user,
+        isAuthenticated: (state) => !!state.username,
   },
   actions: {
     init() {
         if (process.client) {
             const user = localStorage.getItem('auth_user')
-            const token = localStorage.getItem('auth_token')
 
-            if (user && token) {
-                this.user = JSON.parse(user)
-                this.token = token
+            if (user) {
+                const parsedUser = JSON.parse(user)
+
+                this.username = parsedUser.username
+                this.id = parsedUser.id
             }
         }
     },
@@ -32,7 +31,7 @@ export const useAuthStore = defineStore('auth', {
 
         try {
             const { $api } = useNuxtApp()
-            const response = await $api<{ message: string; userId: string }>('/register', {
+            const response = await $api('/register', {
                 method: 'POST',
                 body: { username, password }
             })
@@ -51,17 +50,16 @@ export const useAuthStore = defineStore('auth', {
         try {
             const { $api } = useNuxtApp()
 
-            const response = await $api<{ user: User; token: string }>('/login', {
+            const response = await $api<{ username: string; id: string }>('/login', {
                 method: 'POST',
                 body: { username, password }
             })
 
-            this.user = response.user
-            this.token = response.token
+            this.username = response.username
+            this.id = response.id
 
             if (process.client) {
-                localStorage.setItem('auth_user', JSON.stringify(response.user))
-                localStorage.setItem('auth_token', response.token)
+                localStorage.setItem('auth_user', JSON.stringify(response))
             }
 
             return response
@@ -73,12 +71,11 @@ export const useAuthStore = defineStore('auth', {
         }
     },    
     logout() {
-        this.user = null
-        this.token = null
+        this.username = null
+        this.id = null
       
         if (process.client) {
             localStorage.removeItem('auth_user')
-            localStorage.removeItem('auth_token')
         }
     }
   }

@@ -17,7 +17,7 @@
                 @click="handleLogout"
                 class="text-white px-3 py-2 rounded-md text-sm font-medium"
             >
-                Logout
+                Logout ({{ authStore.username }})
             </button>
           </div>
         </div>

@@ -11,13 +11,12 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     if (!username || !password) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'Username and password are required' }),
+        body: JSON.stringify({ error: 'username and password are required' }),
       };
     }
 
-    const userId = uuidv4();
-    const user = {
-      id: userId,
+    const userObject = {
+      id: uuidv4(),
       username,
       password,
     };
@@ -25,14 +24,14 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     await docClient.send(
       new PutCommand({
         TableName: USERS_TABLE,
-        Item: user,
+        Item: userObject,
         ConditionExpression: 'attribute_not_exists(username)',
       })
     );
 
     return {
       statusCode: 201,
-      body: JSON.stringify({ message: 'User registered successfully', userId }),
+      body: JSON.stringify({ message: 'user registered successfully' }),
     };
   } catch (error: any) {
     console.error('Error:', error);
@@ -40,7 +39,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     if (error.name === 'ConditionalCheckFailedException') {
       return {
         statusCode: 409,
-        body: JSON.stringify({ error: 'Username already exists' }),
+        body: JSON.stringify({ error: 'user already exists' }),
       };
     }
 

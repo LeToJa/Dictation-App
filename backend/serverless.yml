@@ -17,7 +17,8 @@ custom:
   dynamodb:
     start:
       port: 8000
-      inMemory: true
+      inMemory: false
+      dbPath: ./db
       migrate: true
 
 functions:
@@ -35,6 +36,27 @@ functions:
           path: login
           method: post
           cors: true
+  list:
+    handler: src/functions/file/list.handler
+    events:
+      - http:
+          path: files
+          method: get
+          cors: true
+  upload:
+    handler: src/functions/file/upload.handler
+    events:
+      - http:
+          path: files/upload
+          method: post
+          cors: true
+  delete:
+    handler: src/functions/file/delete.handler
+    events:
+      - http:
+          path: files/delete/{id}
+          method: delete
+          cors: true
 
 resources:
   Resources:
@@ -45,15 +67,25 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
-          - AttributeName: username
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+    FilesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: dictation-files
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: userId
             AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
         GlobalSecondaryIndexes:
-          - IndexName: UsernameIndex
+          - IndexName: UserIdIndex
             KeySchema:
-              - AttributeName: username
+              - AttributeName: userId
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
