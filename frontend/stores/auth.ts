@@ -1,9 +1,4 @@
-﻿interface User {
-    id: string
-    user: string
-}
-
-export const useAuthStore = defineStore('auth', {
+﻿export const useAuthStore = defineStore('auth', {
   state: () => ({
         username: null as string | null,
         id: null as string | null,

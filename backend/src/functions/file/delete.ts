@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { docClient, FILES_TABLE } from '../../dynamodb';
 import { GetCommand, DeleteCommand } from '@aws-sdk/lib-dynamodb';

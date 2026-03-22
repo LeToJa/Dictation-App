@@ -1,4 +1,4 @@
-﻿export default defineNuxtRouteMiddleware((to, from) => {
+﻿export default defineNuxtRouteMiddleware(() => {
     let isAuthenticated = false
   
     if (process.client) {

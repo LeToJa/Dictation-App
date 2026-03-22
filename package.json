@@ -1,0 +1,22 @@
+{
+  "name": "dictation-app",
+  "version": "1.0.0",
+  "scripts": {
+    "prepare": "husky install",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint": "npm run lint:backend && npm run lint:frontend"
+  },
+  "devDependencies": {
+    "husky": "^8.0.0",
+    "lint-staged": "^15.0.0"
+  },
+  "lint-staged": {
+    "backend/**/*.{js,jsx,ts,tsx}": [
+      "cd backend && npm run lint -- --fix"
+    ],
+    "frontend/**/*.{js,jsx,ts,tsx,vue}": [
+      "cd frontend && npm run lint -- --fix"
+    ]
+  }
+}

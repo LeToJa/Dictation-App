@@ -1,4 +1,5 @@
-﻿import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { v4 as uuidv4 } from 'uuid';
 import { docClient, USERS_TABLE } from '../dynamodb';
 import { PutCommand } from '@aws-sdk/lib-dynamodb';

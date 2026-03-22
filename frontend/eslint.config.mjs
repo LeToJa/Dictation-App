@@ -1,17 +1,30 @@
-﻿const globals = require("globals");
-const tsPlugin = require("@typescript-eslint/eslint-plugin");
-const tsParser = require("@typescript-eslint/parser");
-const vuePlugin = require("eslint-plugin-vue");
+﻿import globals from "globals";
+import tsPlugin from "@typescript-eslint/eslint-plugin";
+import tsParser from "@typescript-eslint/parser";
+import vuePlugin from "eslint-plugin-vue";
+import vueParser from "vue-eslint-parser";
 
-module.exports = [
+export default [
+  {
+    ignores: [
+      "node_modules/**",
+      ".nuxt/**",
+      ".output/**",
+      "dist/**",
+      "coverage/**",
+      "*.config.js",
+      "*.config.ts",
+    ],
+  },
   {
     files: ["**/*.vue"],
     languageOptions: {
-      parser: require("vue-eslint-parser"),
+      parser: vueParser,
       parserOptions: {
         parser: tsParser,
         ecmaVersion: 2022,
         sourceType: "module",
+        project: "./tsconfig.json",
         extraFileExtensions: [".vue"],
       },
       globals: {
@@ -30,21 +43,24 @@ module.exports = [
       "vue/no-multiple-template-root": "off",
       "vue/attribute-hyphenation": ["warn", "always"],
       "vue/v-on-event-hyphenation": ["warn", "always"],
+      "vue/component-name-in-template-casing": ["warn", "PascalCase"],
+      "vue/valid-template-root": "error",
+      "vue/no-unused-vars": "warn",
     },
   },
   {
-    files: ["**/*.ts", "**/*.js", "**/*.vue"],
+    files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
     languageOptions: {
-      ecmaVersion: 2022,
-      sourceType: "module",
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: "module",
+        project: "./tsconfig.json",
+      },
       globals: {
         ...globals.browser,
         ...globals.node,
         ...globals.jest,
-      },
-      parser: tsParser,
-      parserOptions: {
-        project: "./tsconfig.json",
       },
     },
     plugins: {
@@ -53,23 +69,14 @@ module.exports = [
     rules: {
       ...tsPlugin.configs.recommended.rules,
       "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-unused-vars": ["error", { 
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_" 
+      }],
       "@typescript-eslint/ban-ts-comment": "warn",
       "no-console": ["warn", { allow: ["warn", "error"] }],
       "prefer-const": "error",
       "no-var": "error",
     },
-  },
-  {
-    ignores: [
-      "node_modules/",
-      ".nuxt/",
-      ".output/",
-      "dist/",
-      "coverage/",
-      "*.config.js",
-      "*.config.ts",
-      ".eslintrc.*",
-    ],
   },
 ];

@@ -22,16 +22,11 @@
 </template>
 
 <script setup lang="ts">
-interface Props {
-  file: AudioFile
-}
-
-const { file } = defineProps<Props>()
+const { file } = defineProps<{ file: AudioFile }>()
 
 const filesStore = useFilesStore()
 const isRenaming = ref(false)
 const isDeleting = ref(false)
-const newName = ref('')
 
 const deleteFile = async () => {
   if (!confirm(`¿Estás seguro de que quieres eliminar "${file.name}"?`)) {
