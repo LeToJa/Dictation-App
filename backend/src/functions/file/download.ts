@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { docClient, FILES_TABLE } from "../../dynamodb";
@@ -63,8 +64,7 @@ export const handler = async (
 				name: fileRecord.name,
 			}),
 		};
-	} catch (error: any) {
-		console.error("Error:", error);
+	} catch (error) {
 		return {
 			statusCode: 500,
 			body: JSON.stringify({ error: "Internal server error" }),

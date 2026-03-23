@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { docClient, FILES_TABLE } from "../../dynamodb";
@@ -165,7 +166,6 @@ export const handler = async (
 			body: JSON.stringify({ transcription }),
 		};
 	} catch (error) {
-		console.error("Error de la transcripción:", error);
 		return {
 			statusCode: 500,
 			body: JSON.stringify({ error: "Transcripción fallida." }),

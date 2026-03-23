@@ -1,10 +1,21 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 
 export const handler = async (
-	_event: APIGatewayProxyEvent,
+	event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> => {
 	try {
+		const userId = event.headers["user"];
+
+		if (!userId) {
+			return {
+				statusCode: 401,
+				body: JSON.stringify({ error: "Falta el ID de usuario." }),
+			};
+		}
+
 		const apiKey = process.env.SPEECHMATICS_API_KEY;
+
 		if (!apiKey) {
 			return {
 				statusCode: 500,
@@ -43,23 +54,25 @@ export const handler = async (
 
 		const data = (await response.json()) as ApiKeyResponse;
 		const token = data.key_value;
+		const lang = process.env.SPEECHMATICS_LANG;
 
-		if (!token) {
+		if (!token || !lang) {
 			return {
 				statusCode: 500,
-				body: JSON.stringify({ error: "No se obtuvo token de Speechmatics." }),
+				body: JSON.stringify({
+					error: "No se obtuvo token o idioma de Speechmatics.",
+				}),
 			};
 		}
 
 		return {
 			statusCode: 200,
-			body: JSON.stringify({ token, lang: process.env.SPEECHMATICS_LANG }),
+			body: JSON.stringify({ token, lang }),
 		};
 	} catch (error) {
-		console.error("realtime-token error:", error);
 		return {
 			statusCode: 500,
-			body: JSON.stringify({ error: "Error interno al obtener token RT." }),
+			body: JSON.stringify({ error: "Error interno." }),
 		};
 	}
 };

@@ -39,8 +39,6 @@ export const handler = async (
 			body: JSON.stringify({ message: "Usuario registrado exitosamente." }),
 		};
 	} catch (error: any) {
-		console.error("Error:", error);
-
 		if (error.name === "ConditionalCheckFailedException") {
 			return {
 				statusCode: 409,

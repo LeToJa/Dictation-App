@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { v4 as uuidv4 } from "uuid";
 import { docClient, FILES_TABLE } from "../../dynamodb";
@@ -69,8 +70,7 @@ export const handler = async (
 				name: fileName,
 			}),
 		};
-	} catch (error: any) {
-		console.error("Error:", error);
+	} catch (error) {
 		return {
 			statusCode: 500,
 			body: JSON.stringify({ error: "Error interno." }),

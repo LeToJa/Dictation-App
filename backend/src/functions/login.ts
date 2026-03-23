@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { docClient, USERS_TABLE } from "../dynamodb";
 import { ScanCommand } from "@aws-sdk/lib-dynamodb";
@@ -49,8 +50,6 @@ export const handler = async (
 			body: JSON.stringify({ ...responseusername }),
 		};
 	} catch (error) {
-		console.error("Error:", error);
-
 		return {
 			statusCode: 500,
 			body: JSON.stringify({ error: "Error interno." }),
