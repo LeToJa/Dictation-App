@@ -17,7 +17,7 @@
 							@click="handleLogout"
 							class="text-white px-3 py-2 rounded-md text-sm font-medium"
 						>
-							Logout ({{ authStore.username }})
+							Cerrar Sesión ({{ authStore.username }})
 						</button>
 					</div>
 				</div>

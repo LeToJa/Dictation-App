@@ -1,7 +1,32 @@
 <template>
 	<NuxtLayout>
 		<h1 class="text-3xl font-bold text-gray-900 mb-8">Dashboard</h1>
-		<AudioUploadForm />
+		<div class="flex gap-4 mb-6 justify-center">
+			<button
+				@click="isDictate = false"
+				class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+				:class="
+					isDictate
+						? 'bg-gray-200 text-gray-700'
+						: 'bg-blue-500 text-white hover:bg-blue-600'
+				"
+			>
+				Subir Audio
+			</button>
+			<button
+				@click="isDictate = true"
+				class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+				:class="
+					!isDictate
+						? 'bg-gray-200 text-gray-700'
+						: 'bg-blue-500 text-white hover:bg-blue-600'
+				"
+			>
+				Dictar Audio
+			</button>
+		</div>
+		<AudioUploadForm v-if="!isDictate" />
+		<AudioDictateForm v-else />
 		<div class="mt-8">
 			<h2 class="text-2xl font-semibold text-gray-800 mb-4">Tus audios</h2>
 			<div
@@ -33,6 +58,7 @@ definePageMeta({
 });
 
 const filesStore = useFilesStore();
+const isDictate = ref(false);
 
 useHead({
 	title: "Panel de Control",

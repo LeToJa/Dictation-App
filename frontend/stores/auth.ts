@@ -20,7 +20,6 @@
 				}
 			}
 		},
-
 		async register(username: string, password: string) {
 			this.loading = true;
 
@@ -69,13 +68,21 @@
 				this.loading = false;
 			}
 		},
+		token() {
+			try {
+				const { $api } = useNuxtApp();
+
+				return $api<{ token: string; lang: string }>("/token");
+			} catch (error) {
+				console.error("Token error:", error);
+
+				throw error;
+			}
+		},
 		logout() {
 			this.username = null;
 			this.id = null;
-
-			if (process.client) {
-				localStorage.removeItem("auth_user");
-			}
+			localStorage.removeItem("auth_user");
 		},
 	},
 });

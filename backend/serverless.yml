@@ -76,6 +76,13 @@ functions:
           path: files/transcribe/{id}
           method: post
           cors: true
+  token:
+    handler: src/functions/token.handler
+    events:
+      - http:
+          path: token
+          method: get
+          cors: true
 
 resources:
   Resources:

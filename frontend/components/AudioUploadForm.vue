@@ -6,9 +6,7 @@
 		>
 			<p class="text-red-700 text-sm">{{ error }}</p>
 		</div>
-		<h2 class="text-xl font-semibold mb-4 text-gray-800">
-			Subir Archivo de Audio
-		</h2>
+		<h2 class="text-xl font-semibold mb-4 text-gray-800">Subir Audio</h2>
 		<div class="relative">
 			<input
 				ref="fileInput"
