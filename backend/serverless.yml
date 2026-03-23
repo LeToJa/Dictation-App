@@ -2,8 +2,12 @@ service: dictation-backend
 
 provider:
   name: aws
+  stage: dev
   environment:
     DYNAMODB_ENDPOINT: http://localhost:8000
+    SPEECHMATICS_API_KEY: ${env:SPEECHMATICS_API_KEY}
+    SPEECHMATICS_BASE_URL: ${env:SPEECHMATICS_BASE_URL}
+    SPEECHMATICS_LANG: ${env:SPEECHMATICS_LANG}
 
 plugins:
   - serverless-offline
@@ -50,12 +54,27 @@ functions:
           path: files/upload
           method: post
           cors: true
+  get:
+    handler: src/functions/file/get.handler
+    events:
+      - http:
+          path: files/get/{fileId}
+          method: get
+          cors: true
   delete:
     handler: src/functions/file/delete.handler
     events:
       - http:
           path: files/delete/{id}
           method: delete
+          cors: true
+  transcribe:
+    handler: src/functions/file/transcribe.handler
+    timeout: 600
+    events:
+      - http:
+          path: files/transcribe/{id}
+          method: post
           cors: true
 
 resources:

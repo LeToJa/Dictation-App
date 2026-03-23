@@ -1,9 +1,7 @@
 export interface AudioFile {
   id: string
   name: string
-  originalName: string
-  uploadedAt: string
-  size: number
+  transcription?: string
 }
 
 export const useFilesStore = defineStore('files', {
@@ -32,21 +30,49 @@ export const useFilesStore = defineStore('files', {
         this.loading = false
       }
     },
-    async upload(file: File, id: string): Promise<AudioFile> {
+    async upload(file: File): Promise<AudioFile> {
       const { $api } = useNuxtApp()
       const fileBuffer = await file.arrayBuffer()
+      const base64 = btoa(new Uint8Array(fileBuffer).reduce((data, byte) => data + String.fromCharCode(byte), ''))
       
       const response = await $api<AudioFile>('/files/upload', {
         method: 'POST',
         headers: {
-          'id': id,
-          'Content-Type': 'application/octet-stream',
-          'x-filename': file.name,
+          'name': file.name,
         },
-        body: fileBuffer,
+        body: base64,
       })
 
       return response
+    },
+    async download(fileId: string): Promise<void> {
+      this.error = null
+
+      try {
+        const { $api } = useNuxtApp()
+
+        const data = await $api<{ base64: string; name: string }>(`/files/get/${fileId}`, {
+          method: 'GET',
+        })
+
+        const buffer = Uint8Array.from(atob(data.base64), (c) => c.charCodeAt(0))
+        const blob = new Blob([buffer], {
+          type: data.name.toLowerCase().endsWith('.mp3') ? 'audio/mpeg' : 'audio/wav',
+        })
+
+        const url = URL.createObjectURL(blob)
+        const downloadLink = document.createElement('a')
+
+        downloadLink.href = url
+        downloadLink.download = data.name
+        downloadLink.click()
+
+        URL.revokeObjectURL(url)
+      } catch (error) {
+        console.error('Error downloading file:', error)
+        this.error = 'Failed to download file'
+        throw error
+      }
     },
     async delete(fileId: string) {
       this.error = null
@@ -62,6 +88,29 @@ export const useFilesStore = defineStore('files', {
       } catch (error) {
         console.error('Error deleting file:', error)
         this.error = 'Failed to delete file'
+        throw error
+      }
+    },
+    async transcribe(fileId: string): Promise<string> {
+      this.error = null
+
+      try {
+        const { $api } = useNuxtApp()
+
+        const response = await $api<{ transcription: string }>(`/files/transcribe/${fileId}`, {
+          method: 'POST',
+        })
+
+        const index = this.files.findIndex((f) => f.id === fileId)
+        
+        if (index !== -1) {
+          this.files[index].transcription = response.transcription
+        }
+
+        return response.transcription
+      } catch (error) {
+        console.error('Error transcribing file:', error)
+        this.error = 'Failed to transcribe file'
         throw error
       }
     },

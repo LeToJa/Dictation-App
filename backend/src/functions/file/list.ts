@@ -28,9 +28,6 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     const files = (result.Items || []).map((item: any) => ({
       id: item.id,
       name: item.name,
-      originalName: item.originalName,
-      uploadedAt: item.uploadedAt,
-      size: item.size,
     }));
 
     return {

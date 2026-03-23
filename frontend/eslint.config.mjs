@@ -47,6 +47,12 @@ export default [
       "vue/valid-template-root": "error",
       "vue/no-unused-vars": "warn",
     },
+    overrides: [
+      {
+        files: ['**/*.vue'],
+        extends: ['plugin:@typescript-eslint/disable-type-checked'],
+      },
+    ],
   },
   {
     files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],

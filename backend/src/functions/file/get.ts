@@ -1,0 +1,70 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { docClient, FILES_TABLE } from '../../dynamodb';
+import { GetCommand } from '@aws-sdk/lib-dynamodb';
+import * as fs from 'fs';
+
+export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  try {
+    const userId = event.headers['user'];
+
+    if (!userId) {
+      return {
+        statusCode: 401,
+        body: JSON.stringify({ error: 'Missing userId header' }),
+      };
+    }
+
+    const fileId = event.pathParameters?.fileId;
+
+    if (!fileId) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Missing fileId' }),
+      };
+    }
+
+    const result = await docClient.send(
+      new GetCommand({
+        TableName: FILES_TABLE,
+        Key: {
+          id: fileId,
+        },
+      })
+    );
+
+    if (!result.Item || result.Item.userId !== userId) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ error: 'File not found' }),
+      };
+    }
+
+    const fileRecord = result.Item as any;
+    const filePath = fileRecord.filePath;
+
+    if (!fs.existsSync(filePath)) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ error: 'File not found on disk' }),
+      };
+    }
+
+    const fileBuffer = fs.readFileSync(filePath);
+    const base64 = fileBuffer.toString('base64');
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        base64,
+        name: fileRecord.name,
+      }),
+    };
+  } catch (error: any) {
+    console.error('Error:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Internal server error' }),
+    };
+  }
+};

@@ -10,6 +10,10 @@ const UPLOADS_DIR = path.join(__dirname, '../../../uploads');
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
+    if (!fs.existsSync(UPLOADS_DIR)) {
+      fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+    }
+
     const userId = event.headers['user'];
 
     if (!userId) {
@@ -19,25 +23,8 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       };
     }
 
-    const contentType = event.headers['content-type'] || event.headers['Content-Type'] || '';
-    
-    let fileBuffer: Buffer;
-    let fileName: string;
-
-    if (contentType.includes('application/octet-stream')) {
-      fileBuffer = Buffer.from(event.body || '', 'base64');
-      fileName = event.headers['x-filename'] || `audio-${Date.now()}`;
-    } else if (contentType.includes('multipart/form-data')) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'Multipart upload not yet implemented. Use binary upload.' }),
-      };
-    } else {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'Invalid content type' }),
-      };
-    }
+    const fileBuffer: Buffer = Buffer.from(event.body || '', 'base64');
+    const fileName: string = event.headers['name'] || `audio-${Date.now()}`;
 
     const validExtensions = ['.mp3', '.wav'];
     const hasValidExtension = validExtensions.some((ext) => fileName.toLowerCase().endsWith(ext));
@@ -50,20 +37,17 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     }
 
     const fileId = uuidv4();
-    const timestamp = new Date().toISOString();
+    const extension = path.extname(fileName) || ''
 
-    const filePath = path.join(UPLOADS_DIR, fileId);
-    fs.writeFileSync(filePath, fileBuffer);
+    const filePath = path.join(UPLOADS_DIR, `${fileId}${extension}`)
+    fs.writeFileSync(filePath, fileBuffer)
 
     const fileRecord = {
       id: fileId,
       userId,
       name: fileName,
-      originalName: fileName,
-      uploadedAt: timestamp,
-      size: fileBuffer.length,
       filePath,
-    };
+    }
 
     await docClient.send(
       new PutCommand({
@@ -77,9 +61,6 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       body: JSON.stringify({
         id: fileId,
         name: fileName,
-        originalName: fileName,
-        uploadedAt: timestamp,
-        size: fileBuffer.length,
       }),
     };
   } catch (error: any) {

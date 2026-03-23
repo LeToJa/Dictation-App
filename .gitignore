@@ -8,7 +8,6 @@ frontend/dist
 
 # Dynamodb local files
 backend/.dynamodb
-backend/.serverless
 backend/.build
 backend/undefined
 backend/db/*
