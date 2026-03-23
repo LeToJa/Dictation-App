@@ -1,13 +1,13 @@
 ﻿export default defineNuxtRouteMiddleware(() => {
-    let isAuthenticated = false
+	let isAuthenticated = false;
 
-    if (process.client) {
-        const user = localStorage.getItem('auth_user')
+	if (process.client) {
+		const user = localStorage.getItem("auth_user");
 
-        isAuthenticated = !!(user)
-    }
+		isAuthenticated = !!user;
+	}
 
-    if (isAuthenticated) {
-        return navigateTo('/dashboard')
-    }
-})
+	if (isAuthenticated) {
+		return navigateTo("/dashboard");
+	}
+});

@@ -1,15 +1,15 @@
-﻿import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+﻿import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({
-    endpoint: 'http://localhost:8000',
-    region: 'localhost',
-    credentials: {
-        accessKeyId: 'local',
-        secretAccessKey: 'local',
-    },
+	endpoint: "http://localhost:8000",
+	region: "localhost",
+	credentials: {
+		accessKeyId: "local",
+		secretAccessKey: "local",
+	},
 });
 
 export const docClient = DynamoDBDocumentClient.from(client);
-export const USERS_TABLE = 'dictation-users';
-export const FILES_TABLE = 'dictation-files';
+export const USERS_TABLE = "dictation-users";
+export const FILES_TABLE = "dictation-files";

@@ -1,118 +1,133 @@
 export interface AudioFile {
-  id: string
-  name: string
-  transcription?: string
+	id: string;
+	name: string;
+	transcription?: string;
 }
 
-export const useFilesStore = defineStore('files', {
-  state: () => ({
-    files: [] as AudioFile[],
-    loading: false,
-    error: null as string | null,
-  }),
-  actions: {
-    async list() {
-      this.loading = true
-      this.error = null
+export const useFilesStore = defineStore("files", {
+	state: () => ({
+		files: [] as AudioFile[],
+		loading: false,
+		error: null as string | null,
+	}),
+	actions: {
+		async list() {
+			this.loading = true;
+			this.error = null;
 
-      try {
-        const { $api } = useNuxtApp()
-        const response = await $api<AudioFile[]>('/files', {
-          method: 'GET',
-        })
+			try {
+				const { $api } = useNuxtApp();
+				const response = await $api<AudioFile[]>("/files", {
+					method: "GET",
+				});
 
-        this.files = response
-      } catch (error) {
-        console.error('Error fetching files:', error)
-        this.error = 'Failed to fetch files'
-        throw error
-      } finally {
-        this.loading = false
-      }
-    },
-    async upload(file: File): Promise<AudioFile> {
-      const { $api } = useNuxtApp()
-      const fileBuffer = await file.arrayBuffer()
-      const base64 = btoa(new Uint8Array(fileBuffer).reduce((data, byte) => data + String.fromCharCode(byte), ''))
-      
-      const response = await $api<AudioFile>('/files/upload', {
-        method: 'POST',
-        headers: {
-          'name': file.name,
-        },
-        body: base64,
-      })
+				this.files = response;
+			} catch (error) {
+				console.error("Error fetching files:", error);
+				this.error = "Failed to fetch files";
+				throw error;
+			} finally {
+				this.loading = false;
+			}
+		},
+		async upload(file: File): Promise<AudioFile> {
+			const { $api } = useNuxtApp();
+			const fileBuffer = await file.arrayBuffer();
+			const base64 = btoa(
+				new Uint8Array(fileBuffer).reduce(
+					(data, byte) => data + String.fromCharCode(byte),
+					"",
+				),
+			);
 
-      return response
-    },
-    async download(fileId: string): Promise<void> {
-      this.error = null
+			const response = await $api<AudioFile>("/files/upload", {
+				method: "POST",
+				headers: {
+					name: file.name,
+				},
+				body: base64,
+			});
 
-      try {
-        const { $api } = useNuxtApp()
+			return response;
+		},
+		async download(fileId: string): Promise<void> {
+			this.error = null;
 
-        const data = await $api<{ base64: string; name: string }>(`/files/get/${fileId}`, {
-          method: 'GET',
-        })
+			try {
+				const { $api } = useNuxtApp();
 
-        const buffer = Uint8Array.from(atob(data.base64), (c) => c.charCodeAt(0))
-        const blob = new Blob([buffer], {
-          type: data.name.toLowerCase().endsWith('.mp3') ? 'audio/mpeg' : 'audio/wav',
-        })
+				const data = await $api<{ base64: string; name: string }>(
+					`/files/get/${fileId}`,
+					{
+						method: "GET",
+					},
+				);
 
-        const url = URL.createObjectURL(blob)
-        const downloadLink = document.createElement('a')
+				const buffer = Uint8Array.from(atob(data.base64), (c) =>
+					c.charCodeAt(0),
+				);
+				const blob = new Blob([buffer], {
+					type: data.name.toLowerCase().endsWith(".mp3")
+						? "audio/mpeg"
+						: "audio/wav",
+				});
 
-        downloadLink.href = url
-        downloadLink.download = data.name
-        downloadLink.click()
+				const url = URL.createObjectURL(blob);
+				const downloadLink = document.createElement("a");
 
-        URL.revokeObjectURL(url)
-      } catch (error) {
-        console.error('Error downloading file:', error)
-        this.error = 'Failed to download file'
-        throw error
-      }
-    },
-    async delete(fileId: string) {
-      this.error = null
+				downloadLink.href = url;
+				downloadLink.download = data.name;
+				downloadLink.click();
 
-      try {
-        const { $api } = useNuxtApp()
+				URL.revokeObjectURL(url);
+			} catch (error) {
+				console.error("Error downloading file:", error);
+				this.error = "Failed to download file";
+				throw error;
+			}
+		},
+		async delete(fileId: string) {
+			this.error = null;
 
-        await $api(`/files/delete/${fileId}`, {
-          method: 'DELETE',
-        })
+			try {
+				const { $api } = useNuxtApp();
 
-        this.files = this.files.filter((f) => f.id !== fileId)
-      } catch (error) {
-        console.error('Error deleting file:', error)
-        this.error = 'Failed to delete file'
-        throw error
-      }
-    },
-    async transcribe(fileId: string): Promise<string> {
-      this.error = null
+				await $api(`/files/delete/${fileId}`, {
+					method: "DELETE",
+				});
 
-      try {
-        const { $api } = useNuxtApp()
+				this.files = this.files.filter((f) => f.id !== fileId);
+			} catch (error) {
+				console.error("Error deleting file:", error);
+				this.error = "Failed to delete file";
+				throw error;
+			}
+		},
+		async transcribe(fileId: string): Promise<string> {
+			this.error = null;
 
-        const response = await $api<{ transcription: string }>(`/files/transcribe/${fileId}`, {
-          method: 'POST',
-        })
+			try {
+				const { $api } = useNuxtApp();
 
-        const index = this.files.findIndex((f) => f.id === fileId)
-        
-        if (index !== -1) {
-          this.files[index].transcription = response.transcription
-        }
+				const response = await $api<{ transcription: string }>(
+					`/files/transcribe/${fileId}`,
+					{
+						method: "POST",
+					},
+				);
 
-        return response.transcription
-      } catch (error) {
-        console.error('Error transcribing file:', error)
-        this.error = 'Failed to transcribe file'
-        throw error
-      }
-    },
-  },
-})
+				const index = this.files.findIndex((f) => f.id === fileId);
+
+				if (index !== -1) {
+					this.files[index].transcription = response.transcription;
+				}
+
+				return response.transcription;
+			} catch (error) {
+				console.error("Error transcribing file:", error);
+				this.error = "Failed to transcribe file";
+				throw error;
+			}
+		},
+	},
+});

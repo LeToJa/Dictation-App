@@ -1,16 +1,16 @@
 <template>
-  <div>
-    <NuxtPage />
-  </div>
+	<div>
+		<NuxtPage />
+	</div>
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
+const route = useRoute();
 
 useHead({
-  title: 'Dictation - Dictado App',
-  titleTemplate: '%s | Dictation'
-})
-const authStore = useAuthStore()
-authStore.init()
+	title: "Dictation - Dictado App",
+	titleTemplate: "%s | Dictation",
+});
+const authStore = useAuthStore();
+authStore.init();
 </script>

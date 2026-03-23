@@ -1,17 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-echo "Running linters..."
-
-for dir in backend frontend; do
-  if [ -d "$dir" ]; then
-    echo "Linting $dir..."
-    cd "$dir" && npm run lint && cd ..
-    if [ $? -ne 0 ]; then
-      echo "Lint failed in $dir"
-      exit 1
-    fi
-  fi
-done
-
-echo "All linters passed!"
+npm run format
+npm run lint
+npm run test
