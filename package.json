@@ -3,7 +3,7 @@
 	"private": true,
 	"version": "1.0.0",
 	"scripts": {
-		"prepare": "npm install && cd backend && npm install && cd ../frontend && npm install",
+		"install": "npm install && cd backend && npm install && cd ../frontend && npm install",
 		"lint:backend": "cd backend && npm run lint",
 		"lint:frontend": "cd frontend && npm run lint",
 		"lint": "npm run lint:backend && npm run lint:frontend",

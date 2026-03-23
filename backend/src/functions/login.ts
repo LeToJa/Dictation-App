@@ -13,7 +13,7 @@ export const handler = async (
 			return {
 				statusCode: 400,
 				body: JSON.stringify({
-					error: "username and password are required",
+					error: "Falta el usuario o la contraseña.",
 				}),
 			};
 		}
@@ -35,7 +35,7 @@ export const handler = async (
 		if (!userObject || userObject.password !== password) {
 			return {
 				statusCode: 401,
-				body: JSON.stringify({ error: "Invalid credentials" }),
+				body: JSON.stringify({ error: "Credenciales inválidas." }),
 			};
 		}
 
@@ -50,9 +50,10 @@ export const handler = async (
 		};
 	} catch (error) {
 		console.error("Error:", error);
+
 		return {
 			statusCode: 500,
-			body: JSON.stringify({ error: "Internal server error" }),
+			body: JSON.stringify({ error: "Error interno." }),
 		};
 	}
 };

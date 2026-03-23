@@ -15,7 +15,7 @@ export const handler = async (
 			return {
 				statusCode: 400,
 				body: JSON.stringify({
-					error: "username and password are required",
+					error: "Falta el usuario o la contraseña.",
 				}),
 			};
 		}
@@ -36,7 +36,7 @@ export const handler = async (
 
 		return {
 			statusCode: 201,
-			body: JSON.stringify({ message: "user registered successfully" }),
+			body: JSON.stringify({ message: "Usuario registrado exitosamente." }),
 		};
 	} catch (error: any) {
 		console.error("Error:", error);
@@ -44,13 +44,13 @@ export const handler = async (
 		if (error.name === "ConditionalCheckFailedException") {
 			return {
 				statusCode: 409,
-				body: JSON.stringify({ error: "user already exists" }),
+				body: JSON.stringify({ error: "Ya existe este usuario." }),
 			};
 		}
 
 		return {
 			statusCode: 500,
-			body: JSON.stringify({ error: "Internal server error" }),
+			body: JSON.stringify({ error: "Error interno." }),
 		};
 	}
 };

@@ -31,6 +31,7 @@ export const handler = async (
 				TableName: FILES_TABLE,
 				Key: {
 					id: fileId,
+					userId: userId,
 				},
 			}),
 		);
@@ -53,12 +54,12 @@ export const handler = async (
 		}
 
 		const fileBuffer = fs.readFileSync(filePath);
-		const base64 = fileBuffer.toString("base64");
+		const fileBufferOutput = fileBuffer.toString("base64");
 
 		return {
 			statusCode: 200,
 			body: JSON.stringify({
-				base64,
+				base64: fileBufferOutput,
 				name: fileRecord.name,
 			}),
 		};

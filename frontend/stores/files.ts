@@ -33,7 +33,7 @@ export const useFilesStore = defineStore("files", {
 		async upload(file: File): Promise<AudioFile> {
 			const { $api } = useNuxtApp();
 			const fileBuffer = await file.arrayBuffer();
-			const base64 = btoa(
+			const fileBufferOutput = btoa(
 				new Uint8Array(fileBuffer).reduce(
 					(data, byte) => data + String.fromCharCode(byte),
 					"",
@@ -45,7 +45,7 @@ export const useFilesStore = defineStore("files", {
 				headers: {
 					name: file.name,
 				},
-				body: base64,
+				body: fileBufferOutput,
 			});
 
 			return response;
@@ -57,7 +57,7 @@ export const useFilesStore = defineStore("files", {
 				const { $api } = useNuxtApp();
 
 				const data = await $api<{ base64: string; name: string }>(
-					`/files/get/${fileId}`,
+					`/files/download/${fileId}`,
 					{
 						method: "GET",
 					},

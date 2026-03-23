@@ -21,7 +21,7 @@ export const handler = async (
 		if (!userId) {
 			return {
 				statusCode: 401,
-				body: JSON.stringify({ error: "Missing userId header" }),
+				body: JSON.stringify({ error: "Falta el ID de usuario." }),
 			};
 		}
 
@@ -37,7 +37,7 @@ export const handler = async (
 			return {
 				statusCode: 400,
 				body: JSON.stringify({
-					error: "Invalid file type. Only MP3 and WAV files are allowed.",
+					error: "Formato de archivo no válido. Solo se permiten .mp3 y .wav.",
 				}),
 			};
 		}
@@ -73,7 +73,7 @@ export const handler = async (
 		console.error("Error:", error);
 		return {
 			statusCode: 500,
-			body: JSON.stringify({ error: "Internal server error" }),
+			body: JSON.stringify({ error: "Error interno." }),
 		};
 	}
 };

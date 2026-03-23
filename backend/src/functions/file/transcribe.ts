@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { docClient, FILES_TABLE } from "../../dynamodb";
-import { GetCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -14,7 +14,7 @@ export const handler = async (
 		if (!userId) {
 			return {
 				statusCode: 401,
-				body: JSON.stringify({ error: "Missing userId header" }),
+				body: JSON.stringify({ error: "Falta el ID de usuario." }),
 			};
 		}
 
@@ -23,7 +23,7 @@ export const handler = async (
 		if (!fileId) {
 			return {
 				statusCode: 400,
-				body: JSON.stringify({ error: "Missing fileId" }),
+				body: JSON.stringify({ error: "Falta el ID del archivo." }),
 			};
 		}
 
@@ -32,6 +32,7 @@ export const handler = async (
 				TableName: FILES_TABLE,
 				Key: {
 					id: fileId,
+					userId: userId,
 				},
 			}),
 		);
@@ -39,7 +40,9 @@ export const handler = async (
 		if (!result.Item || result.Item.userId !== userId) {
 			return {
 				statusCode: 404,
-				body: JSON.stringify({ error: "File not found" }),
+				body: JSON.stringify({
+					error: "Archivo no encontrado en la base de datos.",
+				}),
 			};
 		}
 
@@ -49,7 +52,7 @@ export const handler = async (
 		if (!fs.existsSync(filePath)) {
 			return {
 				statusCode: 404,
-				body: JSON.stringify({ error: "File not found on disk" }),
+				body: JSON.stringify({ error: "Archivo no encontrado en el disco." }),
 			};
 		}
 
@@ -59,7 +62,7 @@ export const handler = async (
 			return {
 				statusCode: 500,
 				body: JSON.stringify({
-					error: "Speechmatics API key not configured",
+					error: "API key de Speechmatics no configurada.",
 				}),
 			};
 		}
@@ -111,7 +114,9 @@ export const handler = async (
 			});
 
 			if (!statusResponse.ok) {
-				throw new Error(`Failed to get job status: ${statusResponse.status}`);
+				throw new Error(
+					`Estado de la transcripción: ${statusResponse.status}.`,
+				);
 			}
 
 			const statusData = (await statusResponse.json()) as {
@@ -120,7 +125,7 @@ export const handler = async (
 			jobStatus = statusData.status;
 
 			if (jobStatus === "rejected") {
-				throw new Error("Transcription job was rejected");
+				throw new Error("Transcripción rechazada por el servicio.");
 			}
 		}
 
@@ -134,20 +139,36 @@ export const handler = async (
 		);
 
 		if (!transcriptResponse.ok) {
-			throw new Error(`Failed to get transcript: ${transcriptResponse.status}`);
+			throw new Error(
+				`No se ha obtenido la transcripción: ${transcriptResponse.status}`,
+			);
 		}
 
 		const transcription = await transcriptResponse.text();
+
+		await docClient.send(
+			new UpdateCommand({
+				TableName: FILES_TABLE,
+				Key: {
+					id: fileId,
+					userId: userId,
+				},
+				UpdateExpression: "SET transcription = :transcription",
+				ExpressionAttributeValues: {
+					":transcription": transcription,
+				},
+			}),
+		);
 
 		return {
 			statusCode: 200,
 			body: JSON.stringify({ transcription }),
 		};
 	} catch (error) {
-		console.error("Transcription error:", error);
+		console.error("Error de la transcripción:", error);
 		return {
 			statusCode: 500,
-			body: JSON.stringify({ error: "Transcription failed" }),
+			body: JSON.stringify({ error: "Transcripción fallida." }),
 		};
 	}
 };

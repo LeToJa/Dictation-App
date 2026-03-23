@@ -12,7 +12,7 @@ export const handler = async (
 		if (!userId) {
 			return {
 				statusCode: 401,
-				body: JSON.stringify({ error: "Missing userId header" }),
+				body: JSON.stringify({ error: "Falta el ID de usuario." }),
 			};
 		}
 
@@ -30,6 +30,7 @@ export const handler = async (
 		const files = (result.Items || []).map((item: any) => ({
 			id: item.id,
 			name: item.name,
+			transcription: item.transcription,
 		}));
 
 		return {
@@ -40,7 +41,7 @@ export const handler = async (
 		console.error("Error:", error);
 		return {
 			statusCode: 500,
-			body: JSON.stringify({ error: "Internal server error" }),
+			body: JSON.stringify({ error: "Error interno." }),
 		};
 	}
 };

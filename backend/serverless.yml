@@ -54,11 +54,11 @@ functions:
           path: files/upload
           method: post
           cors: true
-  get:
-    handler: src/functions/file/get.handler
+  download:
+    handler: src/functions/file/download.handler
     events:
       - http:
-          path: files/get/{fileId}
+          path: files/download/{fileId}
           method: get
           cors: true
   delete:
@@ -101,6 +101,8 @@ resources:
         KeySchema:
           - AttributeName: id
             KeyType: HASH
+          - AttributeName: userId
+            KeyType: RANGE
         GlobalSecondaryIndexes:
           - IndexName: UserIdIndex
             KeySchema:

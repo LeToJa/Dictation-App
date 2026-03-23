@@ -98,11 +98,7 @@ const handleLogin = async () => {
 		await authStore.login(username.value, password.value);
 		await navigateTo("/dashboard");
 	} catch (error) {
-		console.error("Login error:", error);
-		setNotice(
-			`Error al iniciar sesión: ${error || "respuesta vacía"}`,
-			"error",
-		);
+		setNotice(`${error}`, "error");
 	} finally {
 		loading.value = false;
 	}

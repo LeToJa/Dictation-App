@@ -8,26 +8,14 @@
 					{{ fileNameWithoutExtension }}
 				</p>
 			</div>
-			<div v-if="file.transcription" class="mt-2">
-				<button
-					@click="showTranscription = !showTranscription"
-					class="text-sm text-blue-600 hover:text-blue-800 underline"
-				>
-					{{
-						showTranscription ? "Ocultar transcripción" : "Ver transcripción"
-					}}
-				</button>
-				<div
-					v-if="showTranscription"
-					class="mt-2 p-3 bg-blue-50 rounded border border-blue-200 text-sm text-gray-700"
-				>
-					{{ file.transcription }}
-				</div>
-			</div>
 		</div>
 		<div class="flex gap-2 ml-4">
 			<button
-				@click="transcribeFile"
+				@click="
+					file.transcription
+						? (showTranscriptionModal = true)
+						: transcribeFile()
+				"
 				:disabled="isDownloading || isTranscribing || isDeleting"
 				class="px-3 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium"
 			>
@@ -35,7 +23,7 @@
 					isTranscribing
 						? "Transcribiendo..."
 						: file.transcription
-							? "Transcrito"
+							? "Ver transcripción"
 							: "Transcribir"
 				}}
 			</button>
@@ -55,6 +43,31 @@
 			</button>
 		</div>
 	</div>
+	<div
+		v-if="showTranscriptionModal"
+		class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+		@click="showTranscriptionModal = false"
+	>
+		<div
+			class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 max-h-96 overflow-y-auto"
+			@click.stop
+		>
+			<div class="flex justify-between items-center mb-4">
+				<h3 class="text-lg font-semibold text-gray-900">
+					Transcripción de {{ fileNameWithoutExtension }}
+				</h3>
+				<button
+					@click="showTranscriptionModal = false"
+					class="text-gray-400 hover:text-gray-600"
+				>
+					✕
+				</button>
+			</div>
+			<div class="text-sm text-gray-700 whitespace-pre-wrap">
+				{{ file.transcription }}
+			</div>
+		</div>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -64,7 +77,7 @@ const filesStore = useFilesStore();
 const isDeleting = ref(false);
 const isTranscribing = ref(false);
 const isDownloading = ref(false);
-const showTranscription = ref(false);
+const showTranscriptionModal = ref(false);
 
 const fileNameWithoutExtension = computed(() => {
 	return file.name.replace(/\.[^/.]+$/, "");

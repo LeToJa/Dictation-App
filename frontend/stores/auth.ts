@@ -62,7 +62,8 @@
 
 				return response;
 			} catch (error) {
-				console.error("Login API error:", error);
+				console.error("Login error:", error);
+
 				throw error;
 			} finally {
 				this.loading = false;

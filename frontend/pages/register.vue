@@ -133,11 +133,7 @@ const handleRegister = async () => {
 			await navigateTo("/login");
 		}, 5000);
 	} catch (error) {
-		console.error("Registro error:", error);
-		setNotice(
-			"Error al registrarse: " + (error || "respuesta desconocida"),
-			"error",
-		);
+		setNotice(`${error}`, "error");
 	} finally {
 		loading.value = false;
 	}

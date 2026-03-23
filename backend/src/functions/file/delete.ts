@@ -13,7 +13,7 @@ export const handler = async (
 		if (!userId) {
 			return {
 				statusCode: 401,
-				body: JSON.stringify({ error: "Missing userId header" }),
+				body: JSON.stringify({ error: "Falta el ID de usuario." }),
 			};
 		}
 
@@ -22,14 +22,17 @@ export const handler = async (
 		if (!fileId) {
 			return {
 				statusCode: 400,
-				body: JSON.stringify({ error: "File ID is required" }),
+				body: JSON.stringify({ error: "Se requiere el ID del archivo." }),
 			};
 		}
 
 		const result = await docClient.send(
 			new GetCommand({
 				TableName: FILES_TABLE,
-				Key: { id: fileId },
+				Key: {
+					id: fileId,
+					userId: userId,
+				},
 			}),
 		);
 
@@ -38,7 +41,7 @@ export const handler = async (
 		if (!file || file.userId !== userId) {
 			return {
 				statusCode: 403,
-				body: JSON.stringify({ error: "Unauthorized" }),
+				body: JSON.stringify({ error: "No autorizado." }),
 			};
 		}
 
@@ -46,26 +49,29 @@ export const handler = async (
 			try {
 				fs.unlinkSync(file.filePath);
 			} catch (err) {
-				console.error("Error deleting file from disk:", err);
+				console.error("Error eliminando el archivo:", err);
 			}
 		}
 
 		await docClient.send(
 			new DeleteCommand({
 				TableName: FILES_TABLE,
-				Key: { id: fileId },
+				Key: {
+					id: fileId,
+					userId: userId,
+				},
 			}),
 		);
 
 		return {
 			statusCode: 200,
-			body: JSON.stringify({ message: "File deleted successfully" }),
+			body: JSON.stringify({ message: "Archivo eliminado exitosamente." }),
 		};
 	} catch (error: any) {
 		console.error("Error:", error);
 		return {
 			statusCode: 500,
-			body: JSON.stringify({ error: "Internal server error" }),
+			body: JSON.stringify({ error: "Error interno." }),
 		};
 	}
 };
