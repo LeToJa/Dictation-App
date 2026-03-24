@@ -14,7 +14,7 @@ export const handler = async (
 		if (!userId) {
 			return {
 				statusCode: 401,
-				body: JSON.stringify({ error: "Missing userId header" }),
+				body: JSON.stringify({ error: "Falta el ID de usuario." }),
 			};
 		}
 
@@ -23,7 +23,7 @@ export const handler = async (
 		if (!fileId) {
 			return {
 				statusCode: 400,
-				body: JSON.stringify({ error: "Missing fileId" }),
+				body: JSON.stringify({ error: "Falta el ID del archivo." }),
 			};
 		}
 
@@ -40,7 +40,7 @@ export const handler = async (
 		if (!result.Item || result.Item.userId !== userId) {
 			return {
 				statusCode: 404,
-				body: JSON.stringify({ error: "File not found" }),
+				body: JSON.stringify({ error: "Archivo no encontrado." }),
 			};
 		}
 
@@ -50,7 +50,7 @@ export const handler = async (
 		if (!fs.existsSync(filePath)) {
 			return {
 				statusCode: 404,
-				body: JSON.stringify({ error: "File not found on disk" }),
+				body: JSON.stringify({ error: "Archivo no encontrado en el disco." }),
 			};
 		}
 
@@ -67,7 +67,7 @@ export const handler = async (
 	} catch (error) {
 		return {
 			statusCode: 500,
-			body: JSON.stringify({ error: "Internal server error" }),
+			body: JSON.stringify({ error: "Error interno." }),
 		};
 	}
 };

@@ -4,30 +4,47 @@
 
 		<div class="flex gap-2 mb-4">
 			<button
-				v-if="!isRecording && !isProcessing && !hasCompletedDictation"
+				v-if="
+					status === TranscriptionStatus.INITIAL ||
+					status === TranscriptionStatus.LOADING
+				"
 				@click="startDictation"
+				:disabled="status === TranscriptionStatus.LOADING"
 				class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
 			>
 				Iniciar dictado en tiempo real
 			</button>
 			<button
-				v-if="isRecording"
+				v-else-if="
+					status === TranscriptionStatus.RECORDING ||
+					status === TranscriptionStatus.PROCESSING
+				"
 				@click="stopDictation"
+				:disabled="status === TranscriptionStatus.PROCESSING"
 				class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
 			>
 				Detener dictado
 			</button>
-			<template v-if="hasCompletedDictation && transcript">
+			<template
+				v-else-if="
+					(status === TranscriptionStatus.COMPLETED && transcript) ||
+					status === TranscriptionStatus.UPLOADING
+				"
+			>
 				<button
 					@click="uploadRecording"
-					:disabled="isUploading"
+					:disabled="status === TranscriptionStatus.UPLOADING"
 					class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
 				>
-					{{ !isUploading ? "Subir transcripción y audio" : "Subiendo..." }}
+					{{
+						status !== TranscriptionStatus.UPLOADING
+							? "Subir transcripción y audio"
+							: "Subiendo..."
+					}}
 				</button>
 				<button
-					@click="resetState"
-					:disabled="isUploading"
+					@click="resetState()"
+					:disabled="status === TranscriptionStatus.UPLOADING"
 					class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
 				>
 					Cancelar
@@ -54,14 +71,12 @@
 <script setup lang="ts">
 import { RealtimeClient } from "@speechmatics/real-time-client";
 
+const filesStore = useFilesStore();
+const authStore = useAuthStore();
 const transcript = ref("");
 const partialTranscript = ref("");
 const error = ref("");
-const isRecording = ref(false);
-const isConnected = ref(false);
-const isProcessing = ref(false);
-const isUploading = ref(false);
-const hasCompletedDictation = ref(false);
+const status = ref(TranscriptionStatus.INITIAL);
 
 let client: RealtimeClient | null = null;
 let mediaRecorder: MediaRecorder | null = null;
@@ -96,30 +111,22 @@ const handleRealtimeMessage = (event: any) => {
 	}
 
 	if (msg.message === "Error") {
-		error.value = `Speechmatics error: ${msg.type ?? "desconocido"}`;
 		stopDictation();
+		resetState(
+			`Error del servidor de transcripción: ${msg.error || "Desconocido"}`,
+		);
 
 		return;
 	}
 };
 
 const startDictation = async () => {
-	if (isRecording.value || isProcessing.value) return;
-
-	isProcessing.value = true;
-	error.value = "";
-	transcript.value = "";
-	partialTranscript.value = "";
-	audioChunks = [];
-	hasCompletedDictation.value = false;
-
-	const authStore = useAuthStore();
 	const tokenResponse = await authStore.token();
 	const token = tokenResponse.token;
 	const lang = tokenResponse.lang;
 
 	if (!token) {
-		error.value = "No se pudo obtener el token de autenticación.";
+		resetState("No se pudo obtener el token de autenticación.");
 
 		return;
 	}
@@ -128,11 +135,8 @@ const startDictation = async () => {
 		client = new RealtimeClient({ url: "wss://eu.rt.speechmatics.com/v2" });
 		client.addEventListener("receiveMessage", handleRealtimeMessage);
 		client.addEventListener("socketStateChange", (ev: any) => {
-			if (ev.socketState === "open") {
-				isConnected.value = true;
-			}
-			if (ev.socketState === "closed") {
-				isConnected.value = false;
+			if (ev.socketState === "connecting") {
+				status.value = TranscriptionStatus.LOADING;
 			}
 		});
 
@@ -168,16 +172,16 @@ const startDictation = async () => {
 		});
 
 		mediaRecorder.start(250);
-		isRecording.value = true;
+		status.value = TranscriptionStatus.RECORDING;
 	} catch (err: any) {
-		error.value = err instanceof Error ? err.message : String(err);
 		stopDictation();
-	} finally {
-		isProcessing.value = false;
+		resetState(err instanceof Error ? err.message : String(err));
 	}
 };
 
 const stopDictation = async () => {
+	status.value = TranscriptionStatus.PROCESSING;
+
 	if (mediaRecorder && mediaRecorder.state !== "inactive") {
 		mediaRecorder.stop();
 	}
@@ -186,8 +190,6 @@ const stopDictation = async () => {
 		stream.getTracks().forEach((track) => track.stop());
 		stream = null;
 	}
-
-	isRecording.value = false;
 
 	if (client) {
 		try {
@@ -199,47 +201,33 @@ const stopDictation = async () => {
 		client = null;
 	}
 
-	hasCompletedDictation.value = true;
-	isConnected.value = false;
+	status.value = TranscriptionStatus.COMPLETED;
 };
 
 const uploadRecording = async () => {
 	if (audioChunks.length === 0 || !transcript.value) return;
 
-	isUploading.value = true;
-	error.value = "";
+	status.value = TranscriptionStatus.UPLOADING;
 
 	try {
 		const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
 		const fileName = `Dictado ${normalizeDate(Date.now())}.webm`;
 		const file = new File([audioBlob], fileName, { type: "audio/webm" });
 
-		const filesStore = useFilesStore();
-		const uploadedFile = await filesStore.upload(file, transcript.value);
+		await filesStore.upload(file, transcript.value);
 
-		filesStore.files.unshift(uploadedFile);
 		resetState();
 	} catch (err: any) {
 		error.value = err instanceof Error ? err.message : String(err);
-	} finally {
-		isUploading.value = false;
 	}
 };
 
-const resetState = () => {
+const resetState = (errorMessage?: string) => {
+	error.value = errorMessage || "";
 	transcript.value = "";
 	partialTranscript.value = "";
-	error.value = "";
-	isRecording.value = false;
-	isConnected.value = false;
-	isProcessing.value = false;
-	isUploading.value = false;
-	hasCompletedDictation.value = false;
 	audioChunks = [];
+	status.value = TranscriptionStatus.INITIAL;
+	[];
 };
-
-onBeforeUnmount(() => {
-	stopDictation();
-	resetState();
-});
 </script>

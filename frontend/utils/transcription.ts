@@ -1,4 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+export enum TranscriptionStatus {
+	INITIAL = "initial",
+	LOADING = "loading",
+	RECORDING = "recording",
+	COMPLETED = "completed",
+	UPLOADING = "uploading",
+	PROCESSING = "processing",
+}
+
 export const normalizeTranscript = (results: Array<any>) => {
 	if (!Array.isArray(results)) return "";
 

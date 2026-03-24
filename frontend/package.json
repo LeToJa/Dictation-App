@@ -8,7 +8,6 @@
 		"lint": "eslint . --ext .ts,.vue,.js --fix"
 	},
 	"dependencies": {
-		"@aws-sdk/client-cognito-identity-provider": "^3.1013.0",
 		"@nuxt/kit": "^4.4.2",
 		"@speechmatics/real-time-client": "^8.3.0",
 		"nuxt": "^3.21.2",

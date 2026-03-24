@@ -163,7 +163,7 @@ export const handler = async (
 
 		return {
 			statusCode: 200,
-			body: JSON.stringify({ transcription }),
+			body: JSON.stringify({ message: "Archivo transcrito exitosamente." }),
 		};
 	} catch (error) {
 		return {

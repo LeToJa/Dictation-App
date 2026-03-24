@@ -67,12 +67,8 @@ export const handler = async (
 		);
 
 		return {
-			statusCode: 201,
-			body: JSON.stringify({
-				id: fileId,
-				name: fileName,
-				transcription,
-			}),
+			statusCode: 200,
+			body: JSON.stringify({ message: "Archivo subido exitosamente." }),
 		};
 	} catch (error) {
 		return {

@@ -98,7 +98,7 @@ const deleteFile = async () => {
 	try {
 		await filesStore.delete(file.id);
 	} catch (err) {
-		console.error("Error eliminando archivo:", err);
+		alert("Error al eliminar el archivo. Por favor, intenta de nuevo.");
 	} finally {
 		isDeleting.value = false;
 	}
@@ -122,7 +122,6 @@ const downloadFile = async () => {
 	try {
 		await filesStore.download(file.id);
 	} catch (err) {
-		console.error("Error downloading file:", err);
 		alert("Error al descargar el archivo. Por favor, intenta de nuevo.");
 	} finally {
 		isDownloading.value = false;

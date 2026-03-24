@@ -60,8 +60,7 @@ const handleUpload = async (event: Event) => {
 	error.value = "";
 
 	try {
-		const uploadedFile = await filesStore.upload(file);
-		filesStore.files.unshift(uploadedFile);
+		await filesStore.upload(file);
 
 		if (fileInput.value) {
 			fileInput.value.value = "";

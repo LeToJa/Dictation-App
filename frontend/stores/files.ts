@@ -30,31 +30,48 @@ export const useFilesStore = defineStore("files", {
 				this.loading = false;
 			}
 		},
-		async upload(file: File, transcription?: string): Promise<AudioFile> {
-			const { $api } = useNuxtApp();
-			const fileBuffer = await file.arrayBuffer();
-			const fileBufferOutput = btoa(
-				new Uint8Array(fileBuffer).reduce(
-					(data, byte) => data + String.fromCharCode(byte),
-					"",
-				),
-			);
+		async upload(file: File, transcription?: string) {
+			this.loading = true;
+			this.error = null;
 
-			const headers: Record<string, string> = {
-				name: file.name,
-			};
+			try {
+				const { $api } = useNuxtApp();
+				const fileBuffer = await file.arrayBuffer();
+				const fileBufferOutput = btoa(
+					new Uint8Array(fileBuffer).reduce(
+						(data, byte) => data + String.fromCharCode(byte),
+						"",
+					),
+				);
 
-			if (transcription) {
-				headers.transcription = transcription;
+				const headers: Record<string, string> = {
+					name: file.name,
+				};
+
+				if (transcription) {
+					headers.transcription = transcription;
+				}
+
+				await $api<AudioFile>("/files/upload", {
+					method: "POST",
+					headers,
+					body: fileBufferOutput,
+				});
+
+				const response = await $api<AudioFile[]>("/files", {
+					method: "GET",
+				});
+
+				setTimeout(() => {}, 1000);
+
+				this.files = response;
+			} catch (error) {
+				console.error("Error uploading file:", error);
+				this.error = "Failed to upload file";
+				throw error;
+			} finally {
+				this.loading = false;
 			}
-
-			const response = await $api<AudioFile>("/files/upload", {
-				method: "POST",
-				headers,
-				body: fileBufferOutput,
-			});
-
-			return response;
 		},
 		async download(fileId: string): Promise<void> {
 			this.error = null;
@@ -104,33 +121,36 @@ export const useFilesStore = defineStore("files", {
 					method: "DELETE",
 				});
 
-				this.files = this.files.filter((f) => f.id !== fileId);
+				const response = await $api<AudioFile[]>("/files", {
+					method: "GET",
+				});
+
+				setTimeout(() => {}, 1000);
+
+				this.files = response;
 			} catch (error) {
 				console.error("Error deleting file:", error);
 				this.error = "Failed to delete file";
 				throw error;
 			}
 		},
-		async transcribe(fileId: string): Promise<string> {
+		async transcribe(fileId: string) {
 			this.error = null;
 
 			try {
 				const { $api } = useNuxtApp();
 
-				const response = await $api<{ transcription: string }>(
-					`/files/transcribe/${fileId}`,
-					{
-						method: "POST",
-					},
-				);
+				await $api<{ transcription: string }>(`/files/transcribe/${fileId}`, {
+					method: "POST",
+				});
 
-				const index = this.files.findIndex((f) => f.id === fileId);
+				const response = await $api<AudioFile[]>("/files", {
+					method: "GET",
+				});
 
-				if (index !== -1) {
-					this.files[index].transcription = response.transcription;
-				}
+				setTimeout(() => {}, 1000);
 
-				return response.transcription;
+				this.files = response;
 			} catch (error) {
 				console.error("Error transcribing file:", error);
 				this.error = "Failed to transcribe file";
