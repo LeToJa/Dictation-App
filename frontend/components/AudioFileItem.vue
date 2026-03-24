@@ -79,8 +79,6 @@ const isTranscribing = ref(false);
 const isDownloading = ref(false);
 const isRenaming = ref(false);
 const showTranscriptionModal = ref(false);
-const showRenameModal = ref(false);
-const newFileName = ref("");
 
 const fileNameWithoutExtension = computed(() => {
 	return file.name.replace(/\.[^/.]+$/, "");
