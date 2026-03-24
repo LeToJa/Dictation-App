@@ -16,7 +16,7 @@
 						? (showTranscriptionModal = true)
 						: transcribeFile()
 				"
-				:disabled="isDownloading || isTranscribing || isDeleting"
+				:disabled="isDownloading || isTranscribing || isDeleting || isRenaming"
 				class="px-3 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium"
 			>
 				{{
@@ -29,14 +29,14 @@
 			</button>
 			<button
 				@click="downloadFile"
-				:disabled="isDownloading || isTranscribing || isDeleting"
+				:disabled="isDownloading || isTranscribing || isDeleting || isRenaming"
 				class="px-3 py-2 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium"
 			>
 				{{ isDownloading ? "Descargando..." : "Descargar" }}
 			</button>
 			<button
 				@click="deleteFile"
-				:disabled="isDownloading || isDeleting || isTranscribing"
+				:disabled="isDownloading || isDeleting || isTranscribing || isRenaming"
 				class="px-3 py-2 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium"
 			>
 				{{ isDeleting ? "Eliminando..." : "Eliminar" }}
@@ -77,7 +77,10 @@ const filesStore = useFilesStore();
 const isDeleting = ref(false);
 const isTranscribing = ref(false);
 const isDownloading = ref(false);
+const isRenaming = ref(false);
 const showTranscriptionModal = ref(false);
+const showRenameModal = ref(false);
+const newFileName = ref("");
 
 const fileNameWithoutExtension = computed(() => {
 	return file.name.replace(/\.[^/.]+$/, "");

@@ -18,7 +18,7 @@ export const handler = async (
 			};
 		}
 
-		const fileId = event.pathParameters?.fileId;
+		const fileId = event.pathParameters?.id;
 
 		if (!fileId) {
 			return {

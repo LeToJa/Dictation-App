@@ -27,9 +27,10 @@ export const handler = async (
 		}
 
 		const fileBuffer: Buffer = Buffer.from(event.body || "", "base64");
-		const fileName: string = event.headers["name"] || `audio-${Date.now()}`;
+		const fileName: string = event.headers["name"] || `audio-${Date.now}`;
+		const transcription: string = event.headers["transcription"] || "";
 
-		const validExtensions = [".mp3", ".wav"];
+		const validExtensions = [".mp3", ".wav", ".webm"];
 		const hasValidExtension = validExtensions.some((ext) =>
 			fileName.toLowerCase().endsWith(ext),
 		);
@@ -38,7 +39,8 @@ export const handler = async (
 			return {
 				statusCode: 400,
 				body: JSON.stringify({
-					error: "Formato de archivo no válido. Solo se permiten .mp3 y .wav.",
+					error:
+						"Formato de archivo no válido. Solo se permiten .mp3, .wav y .webm.",
 				}),
 			};
 		}
@@ -54,6 +56,7 @@ export const handler = async (
 			userId,
 			name: fileName,
 			filePath,
+			transcription,
 		};
 
 		await docClient.send(
@@ -68,6 +71,7 @@ export const handler = async (
 			body: JSON.stringify({
 				id: fileId,
 				name: fileName,
+				transcription,
 			}),
 		};
 	} catch (error) {

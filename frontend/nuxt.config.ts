@@ -18,15 +18,6 @@
 	runtimeConfig: {
 		public: {
 			apiBaseUrl: "http://localhost:4000",
-			awsRegion: "eu-south-2",
-			cognitoUserPoolId: "",
-			cognitoClientId: "",
-		},
-	},
-
-	vite: {
-		optimizeDeps: {
-			include: ["@aws-sdk/client-cognito-identity-provider"],
 		},
 	},
 });

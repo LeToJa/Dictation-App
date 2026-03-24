@@ -40,6 +40,13 @@ functions:
           path: login
           method: post
           cors: true
+  token:
+    handler: src/functions/token.handler
+    events:
+      - http:
+          path: token
+          method: get
+          cors: true
   list:
     handler: src/functions/file/list.handler
     events:
@@ -58,7 +65,7 @@ functions:
     handler: src/functions/file/download.handler
     events:
       - http:
-          path: files/download/{fileId}
+          path: files/download/{id}
           method: get
           cors: true
   delete:
@@ -75,13 +82,6 @@ functions:
       - http:
           path: files/transcribe/{id}
           method: post
-          cors: true
-  token:
-    handler: src/functions/token.handler
-    events:
-      - http:
-          path: token
-          method: get
           cors: true
 
 resources:

@@ -30,7 +30,7 @@ export const useFilesStore = defineStore("files", {
 				this.loading = false;
 			}
 		},
-		async upload(file: File): Promise<AudioFile> {
+		async upload(file: File, transcription?: string): Promise<AudioFile> {
 			const { $api } = useNuxtApp();
 			const fileBuffer = await file.arrayBuffer();
 			const fileBufferOutput = btoa(
@@ -40,11 +40,17 @@ export const useFilesStore = defineStore("files", {
 				),
 			);
 
+			const headers: Record<string, string> = {
+				name: file.name,
+			};
+
+			if (transcription) {
+				headers.transcription = transcription;
+			}
+
 			const response = await $api<AudioFile>("/files/upload", {
 				method: "POST",
-				headers: {
-					name: file.name,
-				},
+				headers,
 				body: fileBufferOutput,
 			});
 
@@ -69,7 +75,9 @@ export const useFilesStore = defineStore("files", {
 				const blob = new Blob([buffer], {
 					type: data.name.toLowerCase().endsWith(".mp3")
 						? "audio/mpeg"
-						: "audio/wav",
+						: data.name.toLowerCase().endsWith(".wav")
+							? "audio/wav"
+							: "audio/webm",
 				});
 
 				const url = URL.createObjectURL(blob);

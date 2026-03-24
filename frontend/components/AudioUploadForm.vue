@@ -11,7 +11,7 @@
 			<input
 				ref="fileInput"
 				type="file"
-				accept=".mp3,.wav"
+				accept=".mp3,.wav,.webm"
 				class="hidden"
 				@change="handleUpload"
 			/>
@@ -20,8 +20,7 @@
 				:disabled="isUploading"
 				class="w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium"
 			>
-				<span v-if="!isUploading">Elije archivos MP3 o WAV</span>
-				<span v-else>Subiendo...</span>
+				{{ !isUploading ? "Elije archivos MP3, WAV o WebM" : "Subiendo..." }}
 			</button>
 		</div>
 	</div>
@@ -40,12 +39,15 @@ const handleUpload = async (event: Event) => {
 
 	if (!file || !authStore.id) return;
 
-	const validTypes = ["audio/mpeg", "audio/wav", "audio/x-wav"];
+	const validTypes = ["audio/mpeg", "audio/wav", "audio/x-wav", "audio/webm"];
 	const isValidType = validTypes.includes(file.type);
-	const isValidName = file.name.endsWith(".mp3") || file.name.endsWith(".wav");
+	const isValidName =
+		file.name.endsWith(".mp3") ||
+		file.name.endsWith(".wav") ||
+		file.name.endsWith(".webm");
 
 	if (!isValidType && !isValidName) {
-		error.value = "Por favor, selecciona un archivo MP3 o WAV válido.";
+		error.value = "Por favor, selecciona un archivo MP3, WAV o WebM válido.";
 
 		if (fileInput.value) {
 			fileInput.value.value = "";
@@ -59,7 +61,7 @@ const handleUpload = async (event: Event) => {
 
 	try {
 		const uploadedFile = await filesStore.upload(file);
-		filesStore.files.push(uploadedFile);
+		filesStore.files.unshift(uploadedFile);
 
 		if (fileInput.value) {
 			fileInput.value.value = "";
