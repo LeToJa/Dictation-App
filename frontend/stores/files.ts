@@ -59,8 +59,6 @@ export const useFilesStore = defineStore("files", {
 					method: "GET",
 				});
 
-				setTimeout(() => {}, 1000);
-
 				this.files = response;
 			} catch (error) {
 				console.error("Uploading error:", error);
@@ -118,8 +116,6 @@ export const useFilesStore = defineStore("files", {
 					method: "GET",
 				});
 
-				setTimeout(() => {}, 1000);
-
 				this.files = response;
 			} catch (error) {
 				console.error("Deleting error:", error);
@@ -138,8 +134,6 @@ export const useFilesStore = defineStore("files", {
 				const response = await $api<AudioFile[]>("/files", {
 					method: "GET",
 				});
-
-				setTimeout(() => {}, 1000);
 
 				this.files = response;
 			} catch (error) {

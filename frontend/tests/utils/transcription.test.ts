@@ -1,5 +1,6 @@
 ﻿/* eslint-disable @typescript-eslint/no-explicit-any */
-import { normalizeTranscript, normalizeDate } from "../../utils/transcription";
+import { describe, it, expect } from "vitest";
+import { normalizeTranscript, normalizeDate } from "@/utils/transcription";
 
 describe("transcription", () => {
 	describe("normalizeTranscript", () => {

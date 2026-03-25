@@ -1,12 +1,13 @@
+import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import { APIGatewayProxyEvent } from "aws-lambda";
-import { handler } from "../../src/functions/token";
+import { handler } from "@/functions/token";
 
 describe("Token Handler", () => {
 	const originalEnv = process.env;
 
 	beforeEach(() => {
 		process.env = { ...originalEnv };
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	afterAll(() => {
@@ -55,11 +56,11 @@ describe("Token Handler", () => {
 		process.env.SPEECHMATICS_API_KEY = "test-api-key";
 		process.env.SPEECHMATICS_LANG = "es";
 
-		global.fetch = jest.fn().mockResolvedValue({
+		global.fetch = vi.fn().mockResolvedValue({
 			ok: true,
 			json: async () => ({
 				apikey_id: "key-123",
-				key_value: null, // No token
+				key_value: null,
 			}),
 		});
 
@@ -81,7 +82,7 @@ describe("Token Handler", () => {
 		process.env.SPEECHMATICS_API_KEY = "test-api-key";
 
 		const errorMessage = "Invalid API key";
-		global.fetch = jest.fn().mockResolvedValue({
+		global.fetch = vi.fn().mockResolvedValue({
 			ok: false,
 			status: 401,
 			text: async () => errorMessage,
@@ -104,7 +105,7 @@ describe("Token Handler", () => {
 
 		process.env.SPEECHMATICS_API_KEY = "test-api-key";
 
-		global.fetch = jest.fn().mockRejectedValue(new Error("Network error"));
+		global.fetch = vi.fn().mockRejectedValue(new Error("Network error"));
 
 		const result = await handler(event);
 
@@ -124,7 +125,7 @@ describe("Token Handler", () => {
 		process.env.SPEECHMATICS_LANG = "es";
 
 		const mockToken = "rt_test_token_12345";
-		global.fetch = jest.fn().mockResolvedValue({
+		global.fetch = vi.fn().mockResolvedValue({
 			ok: true,
 			json: async () => ({
 				apikey_id: "key-123",
@@ -150,7 +151,7 @@ describe("Token Handler", () => {
 
 		process.env.SPEECHMATICS_API_KEY = "test-api-key";
 
-		global.fetch = jest.fn().mockResolvedValue({
+		global.fetch = vi.fn().mockResolvedValue({
 			ok: true,
 			json: async () => ({
 				apikey_id: "key-123",

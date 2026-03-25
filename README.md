@@ -1,6 +1,6 @@
 # Dictation App
 
-Esto es una aplicación de Dictado bastante básica con Login/Registro, subida de archivos, implementación de la _API_ de **SpeechMatics** (tanto con su paquete para dictado real como usando fetch), así como un _Test File_ para cada parte (tanto **FE** como **BE**). Esto último, hubiera preferido usar _vitest_, la verdad.
+Esto es una aplicación de Dictado bastante básica con Login/Registro, subida de archivos, implementación de la _API_ de **SpeechMatics** (tanto con su paquete para dictado real como usando fetch), así como un _Test File_ para cada parte (tanto **FE** como **BE**). Esto último, ~~hubiera preferido usar **Vitest**, la verdad~~ lo convertí a **Vitest** (**Jest** se me hacía un calvario).
 
 Para hacer funcionar la aplicación hay que tener tanto el **BE** como el **FE** _running_. `npm run dev` en el directorio base debería bastar. Hay que hacer _install_ previamente con `npm run prepare` (también desde el base). También he integrado **Husky** con **Prettier** y **Lint**.
 
