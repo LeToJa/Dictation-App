@@ -1,4 +1,9 @@
-﻿export const useAuthStore = defineStore("auth", {
+﻿interface AuthUser {
+	username: string;
+	id: string;
+}
+
+export const useAuthStore = defineStore("auth", {
 	state: () => ({
 		username: null as string | null,
 		id: null as string | null,
@@ -9,13 +14,11 @@
 	},
 	actions: {
 		init() {
-			const user = localStorage.getItem("auth_user");
+			const userCookie = useCookie<AuthUser>("auth_user");
 
-			if (user) {
-				const parsedUser = JSON.parse(user);
-
-				this.username = parsedUser.username;
-				this.id = parsedUser.id;
+			if (userCookie.value) {
+				this.username = userCookie.value.username;
+				this.id = userCookie.value.id;
 			}
 		},
 		async register(
@@ -58,7 +61,11 @@
 				this.username = response.username;
 				this.id = response.id;
 
-				localStorage.setItem("auth_user", JSON.stringify(response));
+				const userCookie = useCookie("auth_user", {
+					maxAge: 60 * 60 * 24 * 7,
+					path: "/",
+				});
+				userCookie.value = JSON.stringify(response);
 
 				return response;
 			} catch (error) {
@@ -81,9 +88,11 @@
 			}
 		},
 		logout() {
+			const userCookie = useCookie("auth_user");
+
 			this.username = null;
 			this.id = null;
-			localStorage.removeItem("auth_user");
+			userCookie.value = null;
 		},
 	},
 });

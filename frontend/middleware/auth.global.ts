@@ -1,8 +1,6 @@
 ﻿export default defineNuxtRouteMiddleware((to) => {
-	if (process.server) return;
-
-	const user = process.client ? localStorage.getItem("auth_user") : null;
-	const isAuthenticated = !!user;
+	const userCookie = useCookie("auth_user");
+	const isAuthenticated = !!userCookie.value;
 	const guestRoutes = ["/login", "/register"];
 	const isGuestRoute = guestRoutes.includes(to.path);
 
