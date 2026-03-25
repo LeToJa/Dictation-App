@@ -53,16 +53,12 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-	middleware: ["auth"],
+useHead({
+	title: "Panel de Control",
 });
 
 const filesStore = useFilesStore();
 const isDictate = ref(false);
-
-useHead({
-	title: "Panel de Control",
-});
 
 onMounted(async () => {
 	try {

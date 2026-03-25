@@ -9,15 +9,13 @@
 	},
 	actions: {
 		init() {
-			if (process.client) {
-				const user = localStorage.getItem("auth_user");
+			const user = localStorage.getItem("auth_user");
 
-				if (user) {
-					const parsedUser = JSON.parse(user);
+			if (user) {
+				const parsedUser = JSON.parse(user);
 
-					this.username = parsedUser.username;
-					this.id = parsedUser.id;
-				}
+				this.username = parsedUser.username;
+				this.id = parsedUser.id;
 			}
 		},
 		async register(
@@ -60,9 +58,7 @@
 				this.username = response.username;
 				this.id = response.id;
 
-				if (process.client) {
-					localStorage.setItem("auth_user", JSON.stringify(response));
-				}
+				localStorage.setItem("auth_user", JSON.stringify(response));
 
 				return response;
 			} catch (error) {
