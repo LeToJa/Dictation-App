@@ -11,7 +11,7 @@
 				<div
 					v-if="noticeMessage"
 					:class="[
-						'rounded-md p-3 mb-4 text-sm',
+						'notification rounded-md p-3 mb-4 text-sm',
 						noticeType === 'success'
 							? 'bg-green-100 border border-green-300 text-green-800'
 							: 'bg-red-100 border border-red-300 text-red-800',

@@ -2,7 +2,7 @@
 
 Esto es una aplicación de Dictado bastante básica con Login/Registro, subida de archivos, implementación de la _API_ de **SpeechMatics** (tanto con su paquete para dictado real como usando fetch), así como un _Test File_ para cada parte (tanto **FE** como **BE**). Esto último, hubiera preferido usar _vitest_, la verdad.
 
-Para hacer funcionar la aplicación hay que tener tanto el **BE** como el **FE** _running_. `npm run dev` en ambos. Hay que hacer install previamente, cosa que (en teoría, porque no lo he _testeado_), puede hacerse desde el directorio padre con `npm run install`. También he integrado **Husky** con **Prettier** y **Lint**.
+Para hacer funcionar la aplicación hay que tener tanto el **BE** como el **FE** _running_. `npm run dev` en el directorio base debería bastar. Hay que hacer _install_ previamente con `npm run prepare` (también desde el base). También he integrado **Husky** con **Prettier** y **Lint**.
 
 Login se hace nativamente (y no es muy seguro, pero esto es una prueba técnica así que...), sin el uso de **AWS Cognito** (no me apetecía crearme una cuenta de **AWS** para esto). También he manejado las _store_ con **Pinia**, porque me parece _cute_.
 

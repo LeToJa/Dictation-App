@@ -1,0 +1,14 @@
+{
+	"compilerOptions": {
+		"target": "ES2020",
+		"module": "CommonJS",
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"types": ["cypress", "node"],
+		"typeRoots": ["./node_modules/@types"]
+	},
+	"include": ["cypress/**/*", "frontend/**/*", "backend/**/*"],
+	"exclude": ["node_modules", "frontend/node_modules", "backend/node_modules"]
+}

@@ -17,12 +17,10 @@ custom:
   serverless-offline:
     httpPort: 4000
     noPrependStageInUrl: true
-    host: 0.0.0.0
   dynamodb:
     start:
       port: 8000
-      inMemory: false
-      dbPath: ./db
+      inMemory: true
       migrate: true
 
 functions:

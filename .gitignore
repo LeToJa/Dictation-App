@@ -10,7 +10,6 @@ frontend/dist
 backend/.dynamodb
 backend/.build
 backend/undefined
-backend/db/*
 backend/uploads/*
 
 # Node dependencies
@@ -31,3 +30,7 @@ frontend/.idea
 .env
 .env.*
 !.env.example
+
+# Cypress videos and screenshots
+frontend/cypress/videos
+frontend/cypress/screenshots
