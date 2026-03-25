@@ -14,8 +14,7 @@
 			}
 		},
 		onResponseError({ response }) {
-			const errorData = response._data as { error?: string };
-			const errorMessage = errorData?.error || `HTTP ${response.status}`;
+			const errorMessage = response._data.error || `HTTP ${response.status}`;
 
 			if (response.status === 401) {
 				const authStore = useAuthStore();
@@ -24,7 +23,7 @@
 				navigateTo("/login");
 			}
 
-			throw new Error(errorMessage);
+			throw errorMessage;
 		},
 	});
 

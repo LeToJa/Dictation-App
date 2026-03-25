@@ -20,19 +20,24 @@
 				}
 			}
 		},
-		async register(username: string, password: string) {
+		async register(
+			username: string,
+			password: string,
+			confirmPassword: string,
+		) {
 			this.loading = true;
 
 			try {
 				const { $api } = useNuxtApp();
 				const response = await $api("/register", {
 					method: "POST",
-					body: { username, password },
+					body: { username, password, confirmPassword },
 				});
 
 				return response;
 			} catch (error) {
 				console.error("Register error:", error);
+
 				throw error;
 			} finally {
 				this.loading = false;

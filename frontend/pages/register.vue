@@ -105,26 +105,12 @@ const handleRegister = async () => {
 	noticeType.value = "";
 	loading.value = true;
 
-	if (!username.value.trim() || !password.value) {
-		setNotice("Por favor completa usuario y contraseña.", "error");
-		loading.value = false;
-		return;
-	}
-
-	if (password.value.length < 6) {
-		setNotice("La contraseña debe tener al menos 6 caracteres.", "error");
-		loading.value = false;
-		return;
-	}
-
-	if (password.value !== confirmPassword.value) {
-		setNotice("Las contraseñas no coinciden.", "error");
-		loading.value = false;
-		return;
-	}
-
 	try {
-		await authStore.register(username.value, password.value);
+		await authStore.register(
+			username.value,
+			password.value,
+			confirmPassword.value,
+		);
 		setNotice(
 			"¡Registro exitoso! Redirigiendo a inicio de sesión en 5 segundos...",
 			"success",

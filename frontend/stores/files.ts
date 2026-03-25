@@ -8,12 +8,10 @@ export const useFilesStore = defineStore("files", {
 	state: () => ({
 		files: [] as AudioFile[],
 		loading: false,
-		error: null as string | null,
 	}),
 	actions: {
 		async list() {
 			this.loading = true;
-			this.error = null;
 
 			try {
 				const { $api } = useNuxtApp();
@@ -23,8 +21,8 @@ export const useFilesStore = defineStore("files", {
 
 				this.files = response;
 			} catch (error) {
-				console.error("Error fetching files:", error);
-				this.error = "Failed to fetch files";
+				console.error("Fetching error:", error);
+
 				throw error;
 			} finally {
 				this.loading = false;
@@ -32,7 +30,6 @@ export const useFilesStore = defineStore("files", {
 		},
 		async upload(file: File, transcription?: string) {
 			this.loading = true;
-			this.error = null;
 
 			try {
 				const { $api } = useNuxtApp();
@@ -66,16 +63,14 @@ export const useFilesStore = defineStore("files", {
 
 				this.files = response;
 			} catch (error) {
-				console.error("Error uploading file:", error);
-				this.error = "Failed to upload file";
+				console.error("Uploading error:", error);
+
 				throw error;
 			} finally {
 				this.loading = false;
 			}
 		},
 		async download(fileId: string): Promise<void> {
-			this.error = null;
-
 			try {
 				const { $api } = useNuxtApp();
 
@@ -106,14 +101,12 @@ export const useFilesStore = defineStore("files", {
 
 				URL.revokeObjectURL(url);
 			} catch (error) {
-				console.error("Error downloading file:", error);
-				this.error = "Failed to download file";
+				console.error("Downloading error:", error);
+
 				throw error;
 			}
 		},
 		async delete(fileId: string) {
-			this.error = null;
-
 			try {
 				const { $api } = useNuxtApp();
 
@@ -129,14 +122,12 @@ export const useFilesStore = defineStore("files", {
 
 				this.files = response;
 			} catch (error) {
-				console.error("Error deleting file:", error);
-				this.error = "Failed to delete file";
+				console.error("Deleting error:", error);
+
 				throw error;
 			}
 		},
 		async transcribe(fileId: string) {
-			this.error = null;
-
 			try {
 				const { $api } = useNuxtApp();
 
@@ -152,8 +143,8 @@ export const useFilesStore = defineStore("files", {
 
 				this.files = response;
 			} catch (error) {
-				console.error("Error transcribing file:", error);
-				this.error = "Failed to transcribe file";
+				console.error("Transcribing error:", error);
+
 				throw error;
 			}
 		},

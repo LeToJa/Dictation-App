@@ -88,12 +88,6 @@ const handleLogin = async () => {
 	noticeType.value = "";
 	loading.value = true;
 
-	if (!username.value.trim() || !password.value) {
-		setNotice("Por favor ingresa usuario y contraseña.", "error");
-		loading.value = false;
-		return;
-	}
-
 	try {
 		await authStore.login(username.value, password.value);
 		await navigateTo("/dashboard");
