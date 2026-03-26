@@ -228,6 +228,5 @@ const resetState = (errorMessage?: string) => {
 	partialTranscript.value = "";
 	audioChunks = [];
 	status.value = TranscriptionStatus.INITIAL;
-	[];
 };
 </script>
